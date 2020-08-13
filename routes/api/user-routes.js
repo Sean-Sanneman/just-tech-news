@@ -5,33 +5,35 @@ const { User } = require("../../models");
 router.get("/", (req, res) => {
   // Access our User model and run .findAll() method)
   User.findAll({
-    attributes: { exclude: ['password'] }
+    attributes: { exclude: ["password"] },
   })
-    .then(dbUserData => res.json(dbUserData))
-    .catch(err => {
+    .then((dbUserData) => res.json(dbUserData))
+    .catch((err) => {
       console.log(err);
       res.status(500).json(err);
     });
+});
 
 // GET /api/users/1
 router.get("/:id", (req, res) => {
-    User.findOne({
-        attributes: { exclude: ['password'] },
-        where: {
-          id: req.params.id
-        }
-      })
-        .then(dbUserData => {
-          if (!dbUserData) {
-            res.status(404).json({ message: 'No user found with this id' });
-            return;
-          }
-          res.json(dbUserData);
-        })
-        .catch(err => {
-          console.log(err);
-          res.status(500).json(err);
-        });
+  User.findOne({
+    attributes: { exclude: ["password"] },
+    where: {
+      id: req.params.id,
+    },
+  })
+    .then((dbUserData) => {
+      if (!dbUserData) {
+        res.status(404).json({ message: "No user found with this id" });
+        return;
+      }
+      res.json(dbUserData);
+    })
+    .catch((err) => {
+      console.log(err);
+      res.status(500).json(err);
+    });
+});
 
 // POST /api/users
 router.post("/", (req, res) => {
@@ -52,8 +54,9 @@ router.post("/", (req, res) => {
 router.put("/:id", (req, res) => {
   // expects {username: 'Lernantino', email: 'lernantino@gmail.com', password: 'password1234'}
 
-  // if req.body has exact key/value pairs to match the model, you can just use `req.body` instead
+  // pass in req.body instead to only update what's passed through
   User.update(req.body, {
+    individualHooks: true,
     where: {
       id: req.params.id,
     },
